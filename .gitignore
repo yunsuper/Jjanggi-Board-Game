@@ -2,3 +2,9 @@
 node_modules
 .DS_Store
 frontend/node_modules/
+
+dist/
+frontend/dist/
+*.log
+.vite/
+.cache/
