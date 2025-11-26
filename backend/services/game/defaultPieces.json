@@ -1,0 +1,267 @@
+{
+    "player1": [
+        {
+            "id": "p1-cha-left",
+            "type": "cha",
+            "x": 0,
+            "y": 9,
+            "alive": true,
+            "owner": "player1"
+        },
+        {
+            "id": "p1-ma-left",
+            "type": "ma",
+            "x": 1,
+            "y": 9,
+            "alive": true,
+            "owner": "player1"
+        },
+        {
+            "id": "p1-sang-left",
+            "type": "sang",
+            "x": 2,
+            "y": 9,
+            "alive": true,
+            "owner": "player1"
+        },
+        {
+            "id": "p1-sa-left",
+            "type": "sa",
+            "x": 3,
+            "y": 9,
+            "alive": true,
+            "owner": "player1"
+        },
+        {
+            "id": "p1-king",
+            "type": "king",
+            "x": 4,
+            "y": 8,
+            "alive": true,
+            "owner": "player1"
+        },
+        {
+            "id": "p1-sa-right",
+            "type": "sa",
+            "x": 5,
+            "y": 9,
+            "alive": true,
+            "owner": "player1"
+        },
+        {
+            "id": "p1-sang-right",
+            "type": "sang",
+            "x": 6,
+            "y": 9,
+            "alive": true,
+            "owner": "player1"
+        },
+        {
+            "id": "p1-ma-right",
+            "type": "ma",
+            "x": 7,
+            "y": 9,
+            "alive": true,
+            "owner": "player1"
+        },
+        {
+            "id": "p1-cha-right",
+            "type": "cha",
+            "x": 8,
+            "y": 9,
+            "alive": true,
+            "owner": "player1"
+        },
+
+        {
+            "id": "p1-po-left",
+            "type": "po",
+            "x": 1,
+            "y": 7,
+            "alive": true,
+            "owner": "player1"
+        },
+        {
+            "id": "p1-po-right",
+            "type": "po",
+            "x": 7,
+            "y": 7,
+            "alive": true,
+            "owner": "player1"
+        },
+
+        {
+            "id": "p1-b0",
+            "type": "byeong",
+            "x": 0,
+            "y": 6,
+            "alive": true,
+            "owner": "player1"
+        },
+        {
+            "id": "p1-b1",
+            "type": "byeong",
+            "x": 2,
+            "y": 6,
+            "alive": true,
+            "owner": "player1"
+        },
+        {
+            "id": "p1-b2",
+            "type": "byeong",
+            "x": 4,
+            "y": 6,
+            "alive": true,
+            "owner": "player1"
+        },
+        {
+            "id": "p1-b3",
+            "type": "byeong",
+            "x": 6,
+            "y": 6,
+            "alive": true,
+            "owner": "player1"
+        },
+        {
+            "id": "p1-b4",
+            "type": "byeong",
+            "x": 8,
+            "y": 6,
+            "alive": true,
+            "owner": "player1"
+        }
+    ],
+
+    "player2": [
+        {
+            "id": "p2-cha-left",
+            "type": "cha",
+            "x": 0,
+            "y": 0,
+            "alive": true,
+            "owner": "player2"
+        },
+        {
+            "id": "p2-ma-left",
+            "type": "ma",
+            "x": 1,
+            "y": 0,
+            "alive": true,
+            "owner": "player2"
+        },
+        {
+            "id": "p2-sang-left",
+            "type": "sang",
+            "x": 2,
+            "y": 0,
+            "alive": true,
+            "owner": "player2"
+        },
+        {
+            "id": "p2-sa-left",
+            "type": "sa",
+            "x": 3,
+            "y": 0,
+            "alive": true,
+            "owner": "player2"
+        },
+        {
+            "id": "p2-king",
+            "type": "king",
+            "x": 4,
+            "y": 1,
+            "alive": true,
+            "owner": "player2"
+        },
+        {
+            "id": "p2-sa-right",
+            "type": "sa",
+            "x": 5,
+            "y": 0,
+            "alive": true,
+            "owner": "player2"
+        },
+        {
+            "id": "p2-sang-right",
+            "type": "sang",
+            "x": 6,
+            "y": 0,
+            "alive": true,
+            "owner": "player2"
+        },
+        {
+            "id": "p2-ma-right",
+            "type": "ma",
+            "x": 7,
+            "y": 0,
+            "alive": true,
+            "owner": "player2"
+        },
+        {
+            "id": "p2-cha-right",
+            "type": "cha",
+            "x": 8,
+            "y": 0,
+            "alive": true,
+            "owner": "player2"
+        },
+
+        {
+            "id": "p2-po-left",
+            "type": "po",
+            "x": 1,
+            "y": 2,
+            "alive": true,
+            "owner": "player2"
+        },
+        {
+            "id": "p2-po-right",
+            "type": "po",
+            "x": 7,
+            "y": 2,
+            "alive": true,
+            "owner": "player2"
+        },
+
+        {
+            "id": "p2-j0",
+            "type": "jol",
+            "x": 0,
+            "y": 3,
+            "alive": true,
+            "owner": "player2"
+        },
+        {
+            "id": "p2-j1",
+            "type": "jol",
+            "x": 2,
+            "y": 3,
+            "alive": true,
+            "owner": "player2"
+        },
+        {
+            "id": "p2-j2",
+            "type": "jol",
+            "x": 4,
+            "y": 3,
+            "alive": true,
+            "owner": "player2"
+        },
+        {
+            "id": "p2-j3",
+            "type": "jol",
+            "x": 6,
+            "y": 3,
+            "alive": true,
+            "owner": "player2"
+        },
+        {
+            "id": "p2-j4",
+            "type": "jol",
+            "x": 8,
+            "y": 3,
+            "alive": true,
+            "owner": "player2"
+        }
+    ]
+}

@@ -1,0 +1,328 @@
+
+/* ============================= */
+/* 기본 레이아웃 */
+/* ============================= */
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f7f7f5;
+    margin: 0;
+    padding: 0;
+    color: #3f2b1f;
+}
+
+.title {
+    color: #4a2f1b;
+    font-weight: 900;
+    text-align: center;
+}
+
+/* ============================= */
+/* 상단 방 정보 + 입장 UI */
+/* ============================= */
+.top-room-bar {
+    width: 800px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+/* 오른쪽 박스 (초/한 + 새 방 버튼 묶음) */
+.right-box {
+    display: flex;
+    align-items: center;
+    gap: 20px;  /* 초/한과 새 방 만들기 사이 여백 */
+}
+
+/* 플레이어 닉네임 표시 */
+.players-info {
+    display: flex;
+    gap: 12px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/* 색상 */
+.player1-name { color: #1e90ff; font-weight: bold; }
+.player2-name { color: #c0392b; font-weight: bold; }
+
+/* 방 번호 입력 + 입장 버튼 */
+.join-room-box {
+    display: flex;
+    gap: 5px;
+}
+
+/* 새 방 만들기 버튼 박스 */
+.create-room-box button {
+    cursor: pointer;
+}
+
+/* ============================= */
+/* 점수 / 현재 차례 UI */
+/* ============================= */
+.score-board {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 10px 5px;
+    width: 800px;
+    border: 1px solid #d8cec2;
+    border-radius: 8px;
+    background-color: #ffffff;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.turn-color {
+    width: 20px;
+    height: 20px;
+    background-color: blue;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.turn {
+    flex-grow: 1;
+}
+
+.button-board {
+    margin-right: 10px;
+}
+
+.replay-game,
+.new-game,
+.leave-game {
+    cursor: pointer;
+}
+
+/* ============================= */
+/* 하단 게임 설명 */
+/* ============================= */
+.howToPlay {
+    width: 800px;
+    padding: 10px 5px;
+    border-radius: 8px;
+    background-color: #ffffff;
+    border: 1px solid #d8cec2;
+    margin-top: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+/* ============================= */
+/* 공용 모달 스타일 */
+/* ============================= */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-overlay.show {
+    display: flex;
+}
+
+.modal-content {
+    background-color: #fff;
+    padding: 20px 30px;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.modal-content h2 {
+    margin-top: 0;
+    margin-bottom: 20px;
+}
+
+#nickname-form input {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-right: 10px;
+    font-size: 1em;
+}
+
+#nickname-form button {
+    padding: 10px 20px;
+    border: none;
+    background-color: #007bff;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1em;
+}
+
+#nickname-form button:hover {
+    background-color: #0056b3;
+}
+
+/* 공통 버튼 스타일 */
+button {
+    padding: 8px 16px;
+    border: 1px solid #d5cec4;
+    border-radius: 6px;
+    font-size: 15px;
+    cursor: pointer;
+    transition: 0.15s ease-in-out;
+    font-weight: 600;
+    background: #f5f0e8;
+    color: #3f2b1f;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.06);
+}
+
+button:hover {
+    background: #ece6dd;
+}
+
+/* 메인 액션 버튼 */
+button.create-room,
+button.new-game,
+button.replay-game {
+    background: #e8e2d8;
+    color: #3f2b1f;
+    border: 1px solid #cbb8a2;
+}
+
+button.create-room:hover,
+button.new-game:hover,
+button.replay-game:hover {
+    background-color: #dcd4c8;
+}
+
+/* 나가기 버튼 */
+button.leave-game {
+    background-color: #c0392b;
+    color: white;
+}
+
+button.leave-game:hover {
+    background-color: #992d22;
+}
+
+/* 입장 버튼 */
+#join-room-btn {
+    background-color: #27ae60;
+    color: white;
+}
+
+#join-room-btn:hover {
+    background-color: #1f8b4d;
+}
+
+#game-result-modal button {
+    margin: 5px;
+    padding: 10px 20px;
+    background-color: #444;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+#game-result-modal button:hover {
+    background-color: #222;
+}
+
+/* ============================= */
+/* 방 번호 + 복사 버튼 UI */
+/* ============================= */
+
+.room-info {
+    width: 800px;
+    font-size: 16px;             /* 기존 20px → 줄임 */
+    font-weight: 600;
+    margin-bottom: 8px;
+    padding: 6px 12px;           /* 전체 크기 줄이기 */
+    background: #f2f2f2;         /* 은은한 베이지 */
+    border: 1px solid #d0d0d0;   /* 더 연한 테두리 */
+    border-radius: 6px;          /* 약간 둥글게 */
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.room-info #room-id {
+    font-size: 18px;             /* 기존 24px → 줄임 */
+    font-weight: 700;
+    color: #444;   
+    font-family: monospace; /* ✅ 복사 시 가독성 좋아짐 */
+    letter-spacing: 0.5px;
+}
+
+.room-id-box {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* ✅ 복사 버튼 */
+#copy-room-id-btn {
+    background-color: #f0ebe4;   /* 기존 버튼 톤과 맞춤 */
+    color: #3f2b1f;
+    border: 1px solid #d0c4b6;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.15s ease-in-out;
+}
+
+#copy-room-id-btn:hover {
+    background-color: #e8e1d9;
+}
+
+#copy-room-id-btn:active {
+    transform: scale(0.95);
+}
+
+/* ✅ 리플레이 종료 모달 */
+#replay-end-modal .modal-content {
+    padding: 20px 30px;
+    background: #fff;
+    border-radius: 8px;
+    text-align: center;
+}
+
+#replay-end-modal button {
+    margin-top: 15px;
+    padding: 10px 20px;
+    background-color: #444;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+#replay-end-modal button:hover {
+    background-color: #222;
+}
+
+.join-room-box input {
+    padding: 10px 14px;
+    font-size: 15px;
+    border: 1px solid #d7d7d7;      /* 아주 연한 그레이 */
+    border-radius: 8px;             /* 둥근 모서리 */
+    background-color: #ffffff;      /* 완전 화이트 */
+    color: #3f2b1f;                 /* 텍스트는 딥 브라운 */
+    outline: none;
+    transition: all 0.2s ease;
+    width: 220px;                   /* 길이 자연스럽게 */
+}
+
+/* 포커스(클릭 시) 스타일 */
+.join-room-box input:focus {
+    border-color: #7bbf8f;          /* 은은한 초록 포커스 */
+    box-shadow: 0 0 0 3px rgba(123, 191, 143, 0.25);
+}

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>장기게임</title>
+    <link rel="stylesheet" href="./src/App.css" />
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <!-- 제목 -->
+        <div class="title">
+            <h2>장기(Janggi)</h2>
+            <h4>Korean Chess</h4>
+        </div>
+
+        <!-- 방번호 -->
+        <div class="room-info">
+            방 번호: <span id="room-id">-</span>
+            <button id="copy-room-id-btn">복사</button>
+        </div>
+
+        <!-- 🔥 상단 방 UI -->
+        <div class="top-room-bar">
+
+            <!-- 왼쪽: 방 번호 입력 + 입장 -->
+            <div class="join-room-box">
+                <input type="text" id="join-room-input" placeholder="방 번호 입력" />
+                <button id="join-room-btn">입장</button>
+            </div>
+
+            <!-- 오른쪽: 플레이어 목록 + 새 방 만들기 -->
+            <div class="right-box">
+
+                <div class="players-info">
+                    <span id="player1-name" class="player1-name">초: -</span>
+                    <span id="player2-name" class="player2-name">한: -</span>
+                </div>
+
+                <div class="create-room-box">
+                    <button class="create-room">새 방 만들기</button>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- 점수판 -->
+        <div class="score-board">
+            <div class="turn-color"></div>
+            <div class="turn">현재 차례: <span class="turn-name">대기 중...</span></div>
+
+            <div class="button-board">
+                <button class="replay-game">리플레이</button>
+                <button class="new-game">다시하기</button>
+                <button class="leave-game">나가기</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Phaser가 들어갈 자리 -->
+    <div id="game-container"></div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="howToPlay">
+            <p>게임 방법:</p>
+            <ul>
+                <li>기물을 클릭해 선택</li>
+                <li>흰색 네모 표시는 이동 가능 위치</li>
+                <li>상대 왕을 잡으면 승리</li>
+            </ul>
+        </div>
+    </footer>
+
+    <!-- 🔥 Nickname Modal -->
+    <div id="nickname-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h2>닉네임을 입력하세요</h2>
+            <form id="nickname-form">
+                <input type="text" id="nickname-input" placeholder="10자 이내" maxlength="10" required />
+                <button type="submit">확인</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 🔥 Opponent Left Modal -->
+    <div id="opponent-left-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h2>상대방이 게임을 나갔습니다</h2>
+            <p>게임은 계속 진행할 수 있습니다.</p>
+            <button id="opponent-left-ok">확인</button>
+        </div>
+    </div>
+
+    <!-- 🔥 승리/패배 결과 모달 -->
+    <div id="game-result-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h2 id="result-title">결과</h2>
+            <p>리플레이를 보거나 새 게임을 시작할 수 있습니다.</p>
+
+            <button id="result-newgame-btn">새 게임</button>
+            <button id="result-replay-btn">리플레이</button>
+            <button id="result-exit-btn">나가기</button>
+        </div>
+    </div>
+
+    <!-- ✅ 리플레이 종료 모달 -->
+    <div id="replay-end-modal" class="modal-overlay">
+    <div class="modal-content">
+        <h2>🔁 리플레이가 모두 끝났습니다!</h2>
+        <button id="replay-end-close-btn">확인</button>
+    </div>
+    </div>
+
+    <script type="module" src="/src/main.js"></script>
+</body>
+</html>
