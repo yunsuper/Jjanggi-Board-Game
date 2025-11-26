@@ -1,4 +1,4 @@
-# 🧩 JJanggi – (장기 보드 게임) Online Korean Chess
+# 🧩 장기 보드 게임 - Online Korean Chess
 
 브라우저 기반의 **실시간 멀티플레이 장기 게임**입니다.
 
