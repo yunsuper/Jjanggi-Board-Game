@@ -1,3 +1,4 @@
+// controllers/game/stateController.js
 const stateService = require("../../services/game/stateService");
 const pool = require("../../db/db");
 
@@ -9,13 +10,20 @@ exports.createRoom = async (req, res) => {
         console.log("🔥 createRoom req.body:", req.body);
         console.log("🔥 createRoom req.query:", req.query);
 
-        // stateService.createRoom() 이 rooms 테이블의 row를 반환함
         const room = await stateService.createRoom();
 
-        // ✅ 프론트가 normalizeRoom(rawRoom) 으로 그대로 쓸 수 있게 DB row 그대로 내려줌
-        return res.json({ room });
+        return res.json({
+            room: {
+                id: room.room_id,
+                status: room.status,
+                player1_id: room.player1_id,
+                player2_id: room.player2_id,
+                player1_nickname: room.player1_nickname,
+                player2_nickname: room.player2_nickname,
+            },
+        });
     } catch (err) {
-        console.error(err);
+        console.error("❌ createRoom Error:", err);
         return res.status(500).json({ message: "서버 오류" });
     }
 };
@@ -27,22 +35,28 @@ exports.joinRoom = async (req, res) => {
     try {
         const { room_id, player_id, nickname } = req.body;
 
-        // 서비스에서 { room, role } 구조로 반환하도록 해둠
         const { room, role } = await stateService.joinRoom(
             room_id,
             player_id,
             nickname
         );
 
-        // ✅ 프론트에서는 { room, role } 구조를 그대로 받는다.
-        //    room 은 DB row 그대로, role 은 "player1" | "player2"
-        return res.json({ room, role });
+        return res.json({
+            room: {
+                id: room.room_id,
+                ...room,
+            },
+            role,
+        });
     } catch (err) {
-        console.error(err);
+        console.error("❌ joinRoom Error:", err);
         return res.status(500).json({ message: "서버 오류" });
     }
 };
 
+// -------------------------
+// 상태 업데이트
+// -------------------------
 exports.updateStatus = async (req, res) => {
     try {
         const { room_id } = req.params;
@@ -76,31 +90,8 @@ exports.updateStatus = async (req, res) => {
             ],
         });
     } catch (err) {
-        console.error(err);
+        console.error("❌ updateStatus Error:", err);
         res.status(500).json({ message: "서버 오류" });
-    }
-};
-
-
-// -------------------------
-// 게임 저장
-// -------------------------
-exports.saveGame = async (req, res) => {
-    try {
-        const { room_id } = req.params;
-        const { board_state, turn, current_player } = req.body;
-
-        await stateService.saveGame(room_id, board_state, turn, current_player);
-        return res.json({ message: "게임 저장 완료" });
-    } catch (err) {
-        console.error(err);
-        if (err.code === "INVALID_TURN") {
-            return res.status(400).json({
-                message: "잘못된 턴입니다. 상대 턴입니다!",
-            });
-        }
-
-        return res.status(500).json({ message: "서버 오류" });
     }
 };
 
@@ -113,7 +104,7 @@ exports.loadGame = async (req, res) => {
         const result = await stateService.loadGame(room_id);
         return res.json(result);
     } catch (err) {
-        console.error(err);
+        console.error("❌ loadGame Error:", err);
         res.status(500).json({ message: "서버 오류" });
     }
 };
@@ -127,7 +118,7 @@ exports.resetGame = async (req, res) => {
         const result = await stateService.resetGame(room_id);
         return res.json(result);
     } catch (err) {
-        console.error(err);
+        console.error("❌ resetGame Error:", err);
         res.status(500).json({ message: "서버 오류" });
     }
 };
@@ -141,10 +132,9 @@ exports.leaveRoom = async (req, res) => {
         const { player_id } = req.body;
 
         await stateService.leaveRoom(room_id, player_id);
-
         return res.json({ message: "플레이어 퇴장 완료" });
     } catch (err) {
-        console.error(err);
+        console.error("❌ leaveRoom Error:", err);
         res.status(500).json({ message: "서버 오류" });
     }
 };
@@ -158,7 +148,44 @@ exports.deleteRoom = async (req, res) => {
         await stateService.deleteRoom(room_id);
         return res.json({ message: "방 삭제 완료" });
     } catch (err) {
-        console.error(err);
+        console.error("❌ deleteRoom Error:", err);
         res.status(500).json({ message: "서버 오류" });
+    }
+};
+
+// -------------------------
+// 말 이동
+// -------------------------
+exports.move = async (req, res) => {
+    try {
+        const { room_id } = req.params;
+        const { pieceId, toX, toY, playerId } = req.body;
+
+        console.log("🔥 /move 요청", {
+            room_id,
+            pieceId,
+            toX,
+            toY,
+            playerId,
+        });
+
+        const result = await stateService.movePiece(
+            room_id,
+            pieceId,
+            toX,
+            toY,
+            playerId
+        );
+
+        console.log("✅ movePiece 결과", result);
+
+        // 규칙 위반, NOT_YOUR_TURN, INVALID_MOVE 같은 것도 다 여기로 내려옴
+        return res.json(result);
+    } catch (err) {
+        console.error("❌ move Error:", err);
+        return res.status(500).json({
+            success: false,
+            message: "서버 오류",
+        });
     }
 };

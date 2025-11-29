@@ -1,4 +1,8 @@
-// ✅ 좌표 변환 — 기존 그대로 사용
+// src/utils/coords.js
+
+// ===============================
+// 🔹 그리드 → 픽셀 변환
+// ===============================
 export const getPixelCoords = (gridX, gridY, gridConfig) => {
     const { gridTopLeftX, gridTopLeftY, tileWidth, tileHeight } = gridConfig;
     return {
@@ -7,18 +11,24 @@ export const getPixelCoords = (gridX, gridY, gridConfig) => {
     };
 };
 
+// ===============================
+// 🔹 픽셀 → 그리드 변환
+// ===============================
 export const getGridCoordsFromPixels = (pixelX, pixelY, gridConfig) => {
     const { gridTopLeftX, gridTopLeftY, tileWidth, tileHeight } = gridConfig;
-    const x = Math.round((pixelX - gridTopLeftX) / tileWidth);
-    const y = Math.round((pixelY - gridTopLeftY) / tileHeight);
-    return { x, y };
+    return {
+        x: Math.round((pixelX - gridTopLeftX) / tileWidth),
+        y: Math.round((pixelY - gridTopLeftY) / tileHeight),
+    };
 };
 
-// ✅ 새 PNG 전용 — 최종 확정 버전
+// ===============================
+// 🔹 스프라이트 key 결정 (UI 전용)
+// 서버가 내려준 piece.owner/type 사용
+// ===============================
 export const getPieceAssetKey = (piece) => {
     const { type, owner } = piece;
 
-    // player1 = 초(cho), player2 = 한(han)
     const prefix = owner === "player1" ? "cho" : "han";
 
     const map = {
@@ -28,16 +38,19 @@ export const getPieceAssetKey = (piece) => {
         sa: "sa",
         king: "wang",
         po: "po",
-        byeong: "jol", // ✅ 병/졸 동일 PNG
+        byeong: "jol",
         jol: "jol",
     };
 
     return prefix + map[type];
 };
 
-// ✅ 그대로 유지 (pieceId 기반 owner 판별)
+// ===============================
+// 🔹 pieceId로 owner 추론 (UI용)
+// 서버가 내려준 piece.owner가 있으면 그걸 먼저 사용
+// ===============================
 export const getPieceOwner = (pieceId) => {
-    if (/^p1/.test(pieceId)) return "player1";
-    if (/^p2/.test(pieceId)) return "player2";
-    return "unknown";
+    if (pieceId.startsWith("p1")) return "player1";
+    if (pieceId.startsWith("p2")) return "player2";
+    return null;
 };

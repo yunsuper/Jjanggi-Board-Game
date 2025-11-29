@@ -115,6 +115,7 @@ body {
 /* 공용 모달 스타일 */
 /* ============================= */
 .modal-overlay {
+    pointer-events: auto;
     display: none;
     position: fixed;
     top: 0;

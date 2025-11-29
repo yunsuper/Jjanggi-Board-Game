@@ -2,14 +2,15 @@
 import { getGridCoordsFromPixels, getPixelCoords } from "../utils/coords.js";
 import ErrorHandler from "../utils/errorHandler.js";
 import { updateTurnUI } from "../ui/turnUI.js";
-import { checkWinner } from "../utils/checkWinner.js";
 import { getPieceAssetKey } from "../utils/coords.js";
 
 //
 // -------------------------------
-//  상태 업데이트
+//  상태 업데이트 (서버 응답만 반영)
 // -------------------------------
 export function updateBoardState(scene, newState) {
+    if (!newState) return;
+
     scene.board_state = newState;
     renderBoard(scene);
     updateTurnUI(scene.board_state.turn, scene.room.players);
@@ -17,24 +18,13 @@ export function updateBoardState(scene, newState) {
 
 //
 // -------------------------------
-//  보드 렌더링
+//  보드 렌더링 (그리기만 함)
 // -------------------------------
 export function renderBoard(scene) {
-    if (!scene.board_state) return;
-
-    // 🔥 board_state.pieces 자체가 없는 경우 안전 처리
-    if (!scene.board_state.pieces) {
-        console.warn(
-            "⚠ board_state.pieces 없음 — 초기화되지 않은 상태. 렌더 스킵!"
-        );
-        return;
-    }
+    if (!scene.board_state || !scene.board_state.pieces) return;
 
     const { player1, player2 } = scene.board_state.pieces;
-    if (!player1 || !player2) {
-        console.warn("⚠ player1 또는 player2 데이터가 없음 — 렌더 스킵!");
-        return;
-    }
+    if (!player1 || !player2) return;
 
     // 기존 스프라이트 제거
     if (scene.pieceSpriteMap) {
@@ -42,7 +32,6 @@ export function renderBoard(scene) {
             obj.sprite.destroy();
         });
     }
-
     scene.pieceSpriteMap = {};
 
     const all = [...player1, ...player2];
@@ -51,17 +40,11 @@ export function renderBoard(scene) {
         if (!piece.alive) return;
 
         const pixel = getPixelCoords(piece.x, piece.y, scene.gridConfig);
-
         const textureKey = getPieceAssetKey(piece);
 
-        // ✅ 중앙 정렬 + 크기 조정 + 위치 보정
-        const sprite = scene.add.image(
-            pixel.x,
-            pixel.y + scene.gridConfig.tileHeight * 0.02, // 약간 아래로 2% 이동
-            textureKey
-        );
+        const sprite = scene.add.image(pixel.x, pixel.y, textureKey);
 
-        // ✅ 타일 크기에 맞춰 자동 스케일링
+        // 타일 크기에 맞게만 조정 (디자인 로직)
         sprite.setDisplaySize(
             scene.gridConfig.tileWidth * 1.1,
             scene.gridConfig.tileHeight * 1.1
@@ -72,6 +55,9 @@ export function renderBoard(scene) {
         sprite.setDepth(10);
         sprite.id = piece.id;
 
+        sprite.boardPosition = { x: piece.x, y: piece.y };
+
+        // 🔥 🔥 🔥 기물별 크기 조절 (복구한 부분)
         switch (piece.type) {
             case "king":
                 sprite.setScale(0.92);
@@ -117,41 +103,42 @@ export function renderBoard(scene) {
         scene.pieceSpriteMap[piece.id] = { sprite };
     });
 }
+
 //
 // -------------------------------
-//  기물 클릭 → movable 조회
+//  기물 클릭 → 서버에 movable 요청만
 // -------------------------------
 export async function selectPiece(scene, pieceId) {
-    console.log("🔥 SELECT PIECE CALLED:", pieceId);
-    const state = scene.board_state;
-    if (!state) {
-        console.log("❌ state 없음");
-        return;
-    }
-
-    const all = [...state.pieces.player1, ...state.pieces.player2];
-    const piece = all.find((p) => p.id === pieceId);
-    console.log("  ↳ piece 찾음:", piece);
-    if (!piece) {
-        console.log("❌ piece 못 찾음");
-        return;
-    }
-
     try {
+        if (!scene.board_state || !scene.board_state.pieces) return;
+
+        const all = [
+            ...scene.board_state.pieces.player1,
+            ...scene.board_state.pieces.player2,
+        ];
+        const piece = all.find((p) => p.id === pieceId);
+        if (!piece) return;
+
+        console.log("📌 movable 보내는 데이터:", {
+            piece,
+            board_state: scene.board_state,
+            playerId: scene.playerRole,
+        });
+
         const res = await fetch("/api/game/movable", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 piece,
-                position: { x: piece.x, y: piece.y },
-                board_state: state,
+                board_state: scene.board_state,
+                playerId: scene.playerRole, // ✔ 누가 요청했는지만 넘김
             }),
         });
 
         const data = await res.json();
-        console.log("🔥 movable API 응답:", data); 
-        scene.movablePositions = data.movablePositions || [];
 
+        // 서버가 계산한 결과만 사용
+        scene.movablePositions = data.movablePositions || [];
         scene.selectedPieceId = pieceId;
     } catch (err) {
         ErrorHandler.handleUnexpectedError("selectPiece", err);
@@ -160,78 +147,58 @@ export async function selectPiece(scene, pieceId) {
 
 //
 // -------------------------------
-//  말 이동
+//  말 이동 → 서버에 move 요청만
 // -------------------------------
 export async function movePiece(scene, pointer, pieceId) {
-    console.log("🟦 movePiece CALLED:", pieceId);
     const id = pieceId || scene.selectedPieceId;
     if (!id) return;
 
-    // target 먼저 계산
+    // ✔ 어디로 클릭했는지만 좌표로 바꿔서 서버에 넘김
     const target = getGridCoordsFromPixels(
         pointer.x,
         pointer.y,
         scene.gridConfig
     );
 
-    // 이동 가능 위치 검사
-    const valid = scene.movablePositions.some(
-        (p) => p.x === target.x && p.y === target.y
-    );
-    if (!valid) return;
-
     try {
-        // 상태 복사
-        const newState = JSON.parse(JSON.stringify(scene.board_state));
-        const all = [...newState.pieces.player1, ...newState.pieces.player2];
-        const piece = all.find((p) => p.id === id);
-        if (!piece) return;
-
-        // 이동
-        piece.x = target.x;
-        piece.y = target.y;
-
-        // 서버 저장
-        await fetch(`/api/game/${scene.room.id}/save`, {
+        const res = await fetch(`/api/game/${scene.room.id}/move`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ board_state: newState }),
+            body: JSON.stringify({
+                pieceId: id,
+                toX: target.x,
+                toY: target.y,
+                playerId: scene.playerRole, // ✔ 내가 누구인지
+            }),
         });
 
-        // UI 업데이트
-        updateBoardState(scene, newState);
+        const data = await res.json();
+        console.log("🎯 move API 응답:", data);
 
-        // 🔥🔥🔥 승리 여부 체크 추가
-        const winner = checkWinner(newState);
-        if (winner) {
-            console.log("🎉 Winner:", winner);
-
-            scene.isBoardReady = false; // 게임 정지
-            scene.showGameResultModal(winner); // PlayScene에서 만든 모달
+        // ✔ 성공 여부/룰 검증은 서버가 판단
+        if (!data.success) {
+            console.warn("❌ 이동 실패:", data.error);
+            return;
         }
 
-        // 상태 초기화
+        // 🔥🔥🔥 resultForRequester 기반 분기 (승/패/계속)
+        if (data.resultForRequester === "YOU_WIN") {
+            scene.showGameResultModal("YOU_WIN");
+            return;
+        }
+
+        if (data.resultForRequester === "YOU_LOSE") {
+            scene.showGameResultModal("YOU_LOSE");
+            return;
+        }
+
+        // 서버가 내려준 최신 상태만 반영
+        updateBoardState(scene, data.board);
+        
+        scene.room.players = data.players ?? scene.room.players;
         scene.selectedPieceId = null;
         scene.movablePositions = [];
     } catch (err) {
         ErrorHandler.handleUnexpectedError("movePiece", err);
     }
-}
-
-//
-// -------------------------------
-//  중국 문자 맵핑
-// -------------------------------
-function getChinese(type) {
-    const map = {
-        cha: "車",
-        ma: "馬",
-        sang: "象",
-        sa: "士",
-        king: "王",
-        byeong: "兵",
-        jol: "卒",
-        po: "包",
-    };
-    return map[type];
 }

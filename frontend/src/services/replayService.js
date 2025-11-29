@@ -2,8 +2,6 @@
 import { updateBoardState } from "./boardService.js";
 import { startPolling, stopPolling } from "./pollingService.js";
 
-let lastPlayersCount = null;
-
 export async function startReplay(scene) {
     if (!scene.room.id) return;
 
@@ -16,7 +14,8 @@ export async function startReplay(scene) {
         if (!res.ok) throw new Error("Replay API error");
 
         const history = await res.json();
-        if (!history || history.length === 0) {
+
+        if (!Array.isArray(history) || history.length === 0) {
             alert("리플레이 기록이 없습니다.");
             scene.isBoardReady = true;
             startPolling(scene);
@@ -26,39 +25,32 @@ export async function startReplay(scene) {
         let idx = 0;
 
         const interval = setInterval(() => {
-            const h = history[idx];
+            const frame = history[idx];
 
             // 리플레이 종료
-            if (!h) {
+            if (!frame) {
                 clearInterval(interval);
 
                 scene.isBoardReady = true;
-
-                // ✅ 모달 띄우기!
+                scene.blockPieceClick = false;
                 scene.showReplayEndModal();
 
                 startPolling(scene);
                 return;
             }
 
-            // 턴 + 보드 상태 모두 반영
-            updateBoardState(scene, {
-                ...h.board_state,
-                turn: h.turn,
-                players: scene.board_state.players,
-            });
+            // 👇 서버가 보낸 frame 그대로 적용 (프론트는 판단/조립 안함)
+            updateBoardState(scene, frame.board_state);
 
             idx++;
-        }, 800); // 1초보다 약간 빠르게 재생하면 더 자연스럽다
+        }, 800);
     } catch (err) {
         console.error("리플레이 실패:", err);
 
         // 문제 생겨도 복구
         scene.isBoardReady = true;
-
-        // ✅ 에러로 종료되어도 모달 띄움
+        scene.blockPieceClick = false;
         scene.showReplayEndModal();
-        
         startPolling(scene);
     }
 }
