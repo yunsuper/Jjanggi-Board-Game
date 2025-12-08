@@ -154,18 +154,51 @@ exports.getMovablePositions = (piece, position, board_state) => {
             while (inBounds(nx, ny)) {
                 const t = findPieceAt(nx, ny);
                 if (!jumped) {
-                    if (t) jumped = true;
-                    nx += dx;
-                    ny += dy;
+                    if (t) {
+                        if (t.type === "po") break;
+                        jumped = true;
+                    }
                 } else {
                     if (t) {
-                        if (isEnemy(t)) moves.push({ x: nx, y: ny });
+                        if (isEnemy(t) && t.type !== "po") {
+                            moves.push({ x: nx, y: ny });
+                        }
                         break;
+                    } else {
+                        moves.push({ x: nx, y: ny });
                     }
                     nx += dx;
                     ny += dy;
                 }
             }
+        });
+        return moves;
+    }
+
+    if (piece.type === "ma") {
+        const routes = [
+            { leg: [0, -1], dest: [-1, -2] },
+            { leg: [0, -1], dest: [1, -2] },
+            { leg: [0, 1], dest: [-1, 2] },
+            { leg: [0, 1], dest: [1, 2] },
+            { leg: [-1, 0], dest: [-2, -1] },
+            { leg: [-1, 0], dest: [-2, 1] },
+            { leg: [1, 0], dest: [2, -1] },
+            { leg: [1, 0], dest: [2, 1] },
+        ];
+
+        routes.forEach((r) => {
+            const bx = x + r.leg[0];
+            const by = y + r.leg[1];
+
+            if (!inBounds(bx, by)) return;
+            if (findPieceAt(bx, by)) return;
+
+            const nx = x + r.dest[0];
+            const ny = y + r.dest[1];
+
+            if (!inBounds(nx, ny)) return;
+            if (isEmptyOrEnemy(nx, ny)) moves.push({ x: nx, y: ny });
         });
         return moves;
     }
